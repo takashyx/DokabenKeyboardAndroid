@@ -138,12 +138,6 @@ public class LatinKeyboard extends Keyboard {
         }
     }
 
-    void setSpaceIcon(final Drawable icon) {
-        if (mSpaceKey != null) {
-            mSpaceKey.icon = icon;
-        }
-    }
-
     static class LatinKey extends Keyboard.Key {
         
         public LatinKey(Resources res, Keyboard.Row parent, int x, int y,

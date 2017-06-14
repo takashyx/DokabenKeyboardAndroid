@@ -26,7 +26,6 @@
 >
     <subtype
         android:label="@string/label_subtype_generic"
-        android:icon="@drawable/icon_en_us"
         android:imeSubtypeLocale="ja_JP"
         android:imeSubtypeMode="keyboard" />
 </input-method>
