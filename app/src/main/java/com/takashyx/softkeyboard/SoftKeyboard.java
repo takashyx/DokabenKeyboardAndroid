@@ -71,10 +71,7 @@ public class SoftKeyboard extends InputMethodService
     private long mLastShiftTime;
     private long mMetaState;
     
-    private LatinKeyboard mSymbolsKeyboard;
-    private LatinKeyboard mSymbolsShiftedKeyboard;
     private LatinKeyboard mQwertyKeyboard;
-    
     private LatinKeyboard mCurKeyboard;
     
     private String mWordSeparators;
@@ -103,8 +100,6 @@ public class SoftKeyboard extends InputMethodService
             mLastDisplayWidth = displayWidth;
         }
         mQwertyKeyboard = new LatinKeyboard(this, R.xml.key_layout);
-        mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
-        mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
     }
     
     /**
@@ -164,19 +159,6 @@ public class SoftKeyboard extends InputMethodService
         // We are now going to initialize our state based on the type of
         // text being edited.
         switch (attribute.inputType & InputType.TYPE_MASK_CLASS) {
-            case InputType.TYPE_CLASS_NUMBER:
-            case InputType.TYPE_CLASS_DATETIME:
-                // Numbers and dates default to the symbols keyboard, with
-                // no extra features.
-                mCurKeyboard = mSymbolsKeyboard;
-                break;
-                
-            case InputType.TYPE_CLASS_PHONE:
-                // Phones will also default to the symbols keyboard, though
-                // often you will want to have a dedicated phone keyboard.
-                mCurKeyboard = mSymbolsKeyboard;
-                break;
-                
             case InputType.TYPE_CLASS_TEXT:
                 // This is general text editing.  We will default to the
                 // normal alphabetic keyboard, and assume that we should
@@ -518,15 +500,6 @@ public class SoftKeyboard extends InputMethodService
             return;
         } else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) {
             // Show a menu or somethin'
-        } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE
-                && mInputView != null) {
-            Keyboard current = mInputView.getKeyboard();
-            if (current == mSymbolsKeyboard || current == mSymbolsShiftedKeyboard) {
-                setLatinKeyboard(mQwertyKeyboard);
-            } else {
-                setLatinKeyboard(mSymbolsKeyboard);
-                mSymbolsKeyboard.setShifted(false);
-            }
         } else {
             handleCharacter(primaryCode, keyCodes);
         }
@@ -594,26 +567,14 @@ public class SoftKeyboard extends InputMethodService
             return;
         }
         
-        Keyboard currentKeyboard = mInputView.getKeyboard();
-        if (mQwertyKeyboard == currentKeyboard) {
-            // Alphabet keyboard
-            checkToggleCapsLock();
-            mInputView.setShifted(mCapsLock || !mInputView.isShifted());
-        } else if (currentKeyboard == mSymbolsKeyboard) {
-            mSymbolsKeyboard.setShifted(true);
-            setLatinKeyboard(mSymbolsShiftedKeyboard);
-            mSymbolsShiftedKeyboard.setShifted(true);
-        } else if (currentKeyboard == mSymbolsShiftedKeyboard) {
-            mSymbolsShiftedKeyboard.setShifted(false);
-            setLatinKeyboard(mSymbolsKeyboard);
-            mSymbolsKeyboard.setShifted(false);
-        }
+        checkToggleCapsLock();
+        mInputView.setShifted(mCapsLock || !mInputView.isShifted());
     }
     
     private void handleCharacter(int primaryCode, int[] keyCodes) {
         if (isInputViewShown()) {
             if (mInputView.isShifted()) {
-                primaryCode = Character.toUpperCase(primaryCode);
+                primaryCode =    Character.toUpperCase(primaryCode);
             }
         }
         if (isAlphabet(primaryCode) && mPredictionOn) {
