@@ -26,7 +26,7 @@
     >
 
     <Row>
-        <Key android:codes="113" android:keyLabel="再変換" android:keyEdgeFlags="left"/>
+        <Key android:codes="113" android:keyLabel="ドカベン" android:keyEdgeFlags="left"/>
         <Key android:codes="119" android:keyLabel="あ"/>
         <Key android:codes="101" android:keyLabel="か"/>
         <Key android:codes="114" android:keyLabel="さ"/>
