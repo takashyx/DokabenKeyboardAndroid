@@ -23,6 +23,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.IBinder;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,7 +34,9 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 /**
@@ -43,7 +46,7 @@ import java.util.List;
  * a basic example for how you would get started writing an input method, to
  * be fleshed out as appropriate.
  */
-public class SoftKeyboard extends InputMethodService 
+public class SoftKeyboard extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
     static final boolean DEBUG = false;
     
@@ -75,7 +78,27 @@ public class SoftKeyboard extends InputMethodService
     private LatinKeyboard mCurKeyboard;
     
     private String mWordSeparators;
-    
+
+    /* store last Keydown for swipe */
+    private int mLastKeyDownKeyCode;
+
+    // table for swipe to code
+    int [][][] dokaben_keycode_array = {
+            //center, left, up, right, down
+            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_O}},
+            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
+    };
+
     /**
      * Main initialization of the input method component.  Be sure to call
      * to super class.
@@ -388,8 +411,12 @@ public class SoftKeyboard extends InputMethodService
                         return true;
                     }
                 }
+                /* handle swpipe */
+                else {
+                    mLastKeyDownKeyCode = keyCode;
+                    return true;
+                }
         }
-        
         return super.onKeyDown(keyCode, event);
     }
 
@@ -402,6 +429,7 @@ public class SoftKeyboard extends InputMethodService
         // If we want to do transformations on text being entered with a hard
         // keyboard, we need to process the up events to update the meta key
         // state we are tracking.
+
         if (PROCESS_HARD_KEYS) {
             if (mPredictionOn) {
                 mMetaState = MetaKeyKeyListener.handleKeyUp(mMetaState,
@@ -481,6 +509,15 @@ public class SoftKeyboard extends InputMethodService
     // Implementation of KeyboardViewListener
 
     public void onKey(int primaryCode, int[] keyCodes) {
+        String s = "[";
+        for (int i:keyCodes){
+            s = s + String.valueOf(i) + ", ";
+        }
+        s = s.substring(0,s.length()-2);
+        s = s + "]";
+
+        Log.i("dokaben", "onKey primaryCode:" + String.valueOf(primaryCode) + " keyCodes: " + s);
+
         if (isWordSeparator(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
@@ -650,26 +687,37 @@ public class SoftKeyboard extends InputMethodService
         }
     }
     
-    public void swipeRight() {
-        if (mCompletionOn) {
-            pickDefaultCandidate();
-        }
-    }
-    
     public void swipeLeft() {
-        handleBackspace();
-    }
-
-    public void swipeDown() {
-        handleClose();
+//        handleBackspace();
+        Log.i("dokaben", "swipeleft");
     }
 
     public void swipeUp() {
+        Log.i("dokaben", "swipeup");
     }
-    
+
+    public void swipeRight(){
+//        if (mCompletionOn) {
+//            pickDefaultCandidate();
+//        }
+        Log.i("dokaben", "swiperight");
+    }
+
+    public void swipeDown() {
+//        handleClose();
+        Log.i("dokaben", "swipedown ");
+    }
+
     public void onPress(int primaryCode) {
+        Log.i("dokaben", "onPress");
+        mLastKeyDownKeyCode = primaryCode;
     }
     
     public void onRelease(int primaryCode) {
+        Log.i("dokaben", "onRelease");
+    }
+
+    public void onDokaben(){
+        Log.i("dokaben", "onDokaben");
     }
 }

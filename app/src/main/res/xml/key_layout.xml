@@ -27,34 +27,33 @@
 
     <Row>
         <Key android:codes="113" android:keyLabel="ドカベン" android:keyEdgeFlags="left"/>
-        <Key android:codes="119" android:keyLabel="あ"/>
-        <Key android:codes="101" android:keyLabel="か"/>
-        <Key android:codes="114" android:keyLabel="さ"/>
+        <Key android:codes="0x30A2" android:keyLabel="あ"/>
+        <Key android:codes="0x30AB" android:keyLabel="か"/>
+        <Key android:codes="0x30B5" android:keyLabel="さ"/>
         <Key android:codes="-5" android:keyIcon="@drawable/sym_keyboard_delete" android:keyEdgeFlags="right"/>
     </Row>
 
-
     <Row>
         <Key android:codes="113" android:keyLabel="←" android:keyEdgeFlags="left"/>
-        <Key android:codes="119" android:keyLabel="た"/>
-        <Key android:codes="101" android:keyLabel="な"/>
-        <Key android:codes="114" android:keyLabel="は"/>
+        <Key android:codes="0x30BF" android:keyLabel="た"/>
+        <Key android:codes="0x30CA" android:keyLabel="な"/>
+        <Key android:codes="0x30CF" android:keyLabel="は"/>
         <Key android:codes="112" android:keyLabel="→" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
         <Key android:codes="-3" android:keyIcon="@drawable/sym_keyboard_done" android:keyEdgeFlags="left"/>
-        <Key android:codes="119" android:keyLabel="ま"/>
-        <Key android:codes="101" android:keyLabel="や"/>
-        <Key android:codes="114" android:keyLabel="ら"/>
+        <Key android:codes="0x30DE" android:keyLabel="ま"/>
+        <Key android:codes="0x30E4" android:keyLabel="や"/>
+        <Key android:codes="0x30E9" android:keyLabel="ら"/>
         <Key android:codes="32" android:keyIcon="@drawable/sym_keyboard_space" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
         <Key android:codes="-101" android:keyIcon="@drawable/sym_keyboard_language_switch" android:keyEdgeFlags="left"/>
-        <Key android:codes="119" android:keyLabel="゛゜"/>
-        <Key android:codes="101" android:keyLabel="わ"/>
-        <Key android:codes="114" android:keyLabel="ー"/>
+        <Key android:codes="1009" android:keyLabel="゛゜"/>
+        <Key android:codes="0x30EF" android:keyLabel="わ"/>
+        <Key android:codes="0x30FC" android:keyLabel="ー"/>
         <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return" android:keyEdgeFlags="right"/>
     </Row>
     <!--
