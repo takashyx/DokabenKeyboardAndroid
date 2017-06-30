@@ -37,7 +37,9 @@ import android.view.inputmethod.InputMethodSubtype;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -80,24 +82,28 @@ public class SoftKeyboard extends InputMethodService
     private String mWordSeparators;
 
     /* store last Keydown for swipe */
-    private int mLastKeyDownKeyCode;
+    private int mKeyDownKeyCode;
 
-    // table for swipe to code
-    int [][][] dokaben_keycode_array = {
+    /*swipe status*/
+    private int mSwipeDirection;
+
+    private int [][] dokaben_keycode_array = {
             //center, left, up, right, down
-            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_K, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_T, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_Y, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_W, KeyEvent.KEYCODE_O}},
-            { {KeyEvent.KEYCODE_A}, {KeyEvent.KEYCODE_I}, {KeyEvent.KEYCODE_U}, {KeyEvent.KEYCODE_E}, {KeyEvent.KEYCODE_O}},
+            {0x30A2, 0x30A4, 0x30A6, 0x30A8, 0x30AA}, // あいうえお
+            {0x30AB, 0x30AD, 0x30AF, 0x30B1, 0x30B3}, // かきくけこ
+            {0x30B5, 0x30B7, 0x30B9, 0x30BB, 0x30BD}, // さしすせそ
+            {0x30BF, 0x30C1, 0x30C4, 0x30C6, 0x30C8}, // たちつてと
+            {0x30CA, 0x30CB, 0x30CC, 0x30CD, 0x30CE}, // なにぬねの
+            {0x30CF, 0x30D2, 0x30D5, 0x30D8, 0x30DB}, // はひふへほ
+            {0x30DE, 0x30DF, 0x30E0, 0x30E1, 0x30E2}, // まみむめも
+            {0x30E4, 0,      0x30E6, 0,      0x30E8}, // や（ゆ）よ
+            {0x30E9, 0x30EA, 0x30EB, 0x30EC, 0x30ED}, // らりるれろ
+            {0x3001, 0x3002, 0xFF1F, 0xFF01, 0x2026}, //【要修正】（濁点半濁点大小）゛（小）゜（なし）
+            {0x30EF, 0x30F2, 0x30F3, 0x30FC, 0x301C}, // わをんー〜
+            {0x3001, 0x3002, 0xFF1F, 0xFF01, 0x2026}, //、。？！…
     };
+
+    private Map<Integer, Integer> dokaben_keycode_array_index;
 
     /**
      * Main initialization of the input method component.  Be sure to call
@@ -107,6 +113,20 @@ public class SoftKeyboard extends InputMethodService
         super.onCreate();
         mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
+
+        dokaben_keycode_array_index = new HashMap<Integer, Integer>();
+        dokaben_keycode_array_index.put(0x30A2,0);
+        dokaben_keycode_array_index.put(0x30AB,1);
+        dokaben_keycode_array_index.put(0x30B5,2);
+        dokaben_keycode_array_index.put(0x30BF,3);
+        dokaben_keycode_array_index.put(0x30CA,4);
+        dokaben_keycode_array_index.put(0x30CF,5);
+        dokaben_keycode_array_index.put(0x30DE,6);
+        dokaben_keycode_array_index.put(0x30E4,7);
+        dokaben_keycode_array_index.put(0x30E9,8);
+        dokaben_keycode_array_index.put(0,9);
+        dokaben_keycode_array_index.put(0x30EF,10);
+        dokaben_keycode_array_index.put(0x3001,11);
     }
     
     /**
@@ -135,6 +155,29 @@ public class SoftKeyboard extends InputMethodService
         mInputView = (LatinKeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
+        mInputView.setOnTouchListener(new OnSwipeTouchListener(this)
+        {
+            public void onKeySwipeLeft() {
+                Log.i("dokaben", "onKeySwipeLeft");
+                mSwipeDirection = 1;
+            }
+
+            public void onKeySwipeUp() {
+                Log.i("dokaben", "onKeySwipeUp");
+                mSwipeDirection = 2;
+            }
+
+            public void onKeySwipeRight(){
+                Log.i("dokaben", "onKeySwipeRight");
+                mSwipeDirection = 3;
+            }
+
+            public void onKeySwipeDown() {
+                Log.i("dokaben", "onKeySwipeDown ");
+                mSwipeDirection = 4;
+            }
+        });
+
         setLatinKeyboard(mQwertyKeyboard);
         return mInputView;
     }
@@ -413,7 +456,7 @@ public class SoftKeyboard extends InputMethodService
                 }
                 /* handle swpipe */
                 else {
-                    mLastKeyDownKeyCode = keyCode;
+                    mKeyDownKeyCode = keyCode;
                     return true;
                 }
         }
@@ -537,7 +580,12 @@ public class SoftKeyboard extends InputMethodService
             return;
         } else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) {
             // Show a menu or somethin'
-        } else {
+        }
+
+        else if (0x30A2 <= primaryCode && primaryCode <= 0x30FF) {
+            Log.i("dokaben","catch PriaryCode: " + String.valueOf(primaryCode) );
+        }
+        else {
             handleCharacter(primaryCode, keyCodes);
         }
     }
@@ -686,38 +734,43 @@ public class SoftKeyboard extends InputMethodService
             commitTyped(getCurrentInputConnection());
         }
     }
-    
-    public void swipeLeft() {
-//        handleBackspace();
-        Log.i("dokaben", "swipeleft");
-    }
-
-    public void swipeUp() {
-        Log.i("dokaben", "swipeup");
-    }
-
-    public void swipeRight(){
-//        if (mCompletionOn) {
-//            pickDefaultCandidate();
-//        }
-        Log.i("dokaben", "swiperight");
-    }
-
-    public void swipeDown() {
-//        handleClose();
-        Log.i("dokaben", "swipedown ");
-    }
 
     public void onPress(int primaryCode) {
         Log.i("dokaben", "onPress");
-        mLastKeyDownKeyCode = primaryCode;
+        mKeyDownKeyCode = primaryCode;
+        mSwipeDirection = 0;
     }
     
     public void onRelease(int primaryCode) {
         Log.i("dokaben", "onRelease");
+        // send char here
+        if(0x30A2 <= mKeyDownKeyCode && mKeyDownKeyCode <= 0x30FF){
+            int FinalInputUnicode = dokaben_keycode_array[dokaben_keycode_array_index.get(mKeyDownKeyCode)][mSwipeDirection];
+            int[] keyCodes = {FinalInputUnicode};
+            handleCharacter(FinalInputUnicode, keyCodes);
+        }
+        mSwipeDirection = 0;
+    }
+
+    public void swipeRight() {
+        Log.i("dokaben", "swipeRight");
+    }
+
+    public void swipeLeft() {
+        Log.i("dokaben", "swipeLeft");
+
+    }
+
+    public void swipeUp() {
+        Log.i("dokaben", "swipeUp");
+    }
+
+    public void swipeDown() {
+        Log.i("dokaben", "swipeDown");
     }
 
     public void onDokaben(){
         Log.i("dokaben", "onDokaben");
     }
+
 }
