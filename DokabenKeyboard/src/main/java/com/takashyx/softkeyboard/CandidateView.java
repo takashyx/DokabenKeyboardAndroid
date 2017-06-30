@@ -16,6 +16,7 @@
 
 package com.takashyx.softkeyboard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -235,7 +236,8 @@ public class CandidateView extends View {
         scrollTo(sx, getScrollY());
         invalidate();
     }
-    
+
+    @SuppressLint("WrongCall")
     public void setSuggestions(List<String> suggestions, boolean completions,
             boolean typedWordValid) {
         clear();
@@ -304,6 +306,7 @@ public class CandidateView extends View {
      * gesture.
      * @param x
      */
+    @SuppressLint("WrongCall")
     public void takeSuggestionAt(float x) {
         mTouchX = (int) x;
         // To detect candidate

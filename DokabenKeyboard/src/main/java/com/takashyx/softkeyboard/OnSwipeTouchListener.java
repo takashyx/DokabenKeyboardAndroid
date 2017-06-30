@@ -16,9 +16,9 @@ import android.view.View.OnTouchListener;
 public class OnSwipeTouchListener implements OnTouchListener {
 
     // 最低スワイプ距離
-    private static final int SWIPE_MIN_DISTANCE = 50;
+    private static final int SWIPE_MIN_DISTANCE = 10;
     // 最低スワイプスピード
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 10;
 
     private final GestureDetector gestureDetector;
 
@@ -33,7 +33,7 @@ public class OnSwipeTouchListener implements OnTouchListener {
 
     private final class GestureListener extends SimpleOnGestureListener {
 
-        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_THRESHOLD = 10;
         private static final int SWIPE_VELOCITY_THRESHOLD = 10;
 
         /* do not override onDown to handle key

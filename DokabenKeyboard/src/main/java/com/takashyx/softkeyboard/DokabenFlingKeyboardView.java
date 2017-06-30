@@ -23,7 +23,7 @@ import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodSubtype;
 
-public class DokabenKeyboardView extends KeyboardView {
+public class DokabenFlingKeyboardView extends KeyboardView {
 
     static final int KEYCODE_OPTIONS = -100;
     // TODO: Move this into android.inputmethodservice.Keyboard
@@ -31,12 +31,15 @@ public class DokabenKeyboardView extends KeyboardView {
 
     static final int KEYCODE_CURSOR_LEFT = -102;
     static final int KEYCODE_CURSOR_RIGHT = -103;
+    static final int KEYCODE_DAKUTEN = -104;
+    static final int KEYCODE_KIGOU = -105;
+    static final int KEYCODE_DOKABEN = -106;
 
-    public DokabenKeyboardView(Context context, AttributeSet attrs) {
+    public DokabenFlingKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DokabenKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+    public DokabenFlingKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

@@ -23,7 +23,7 @@ import android.inputmethodservice.Keyboard;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
-public class DokabenKeyboard extends Keyboard {
+public class DokabenFlingKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
@@ -53,12 +53,12 @@ public class DokabenKeyboard extends Keyboard {
      */
     private Key mSavedLanguageSwitchKey;
     
-    public DokabenKeyboard(Context context, int xmlLayoutResId) {
+    public DokabenFlingKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId);
     }
 
-    public DokabenKeyboard(Context context, int layoutTemplateResId,
-                           CharSequence characters, int columns, int horizontalPadding) {
+    public DokabenFlingKeyboard(Context context, int layoutTemplateResId,
+                                CharSequence characters, int columns, int horizontalPadding) {
         super(context, layoutTemplateResId, characters, columns, horizontalPadding);
     }
 
@@ -70,7 +70,7 @@ public class DokabenKeyboard extends Keyboard {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
             mSpaceKey = key;
-        } else if (key.codes[0] == DokabenKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
+        } else if (key.codes[0] == DokabenFlingKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
             mLanguageSwitchKey = key;
             mSavedLanguageSwitchKey = new LatinKey(res, parent, x, y, parser);
         }

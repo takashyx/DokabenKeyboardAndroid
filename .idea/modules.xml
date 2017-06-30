@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DokabenKeyboard.iml" filepath="$PROJECT_DIR$/DokabenKeyboard.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DokabenKeyboard/DokabenKeyboard.iml" filepath="$PROJECT_DIR$/DokabenKeyboard/DokabenKeyboard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DokabenKeyboardAndroid.iml" filepath="$PROJECT_DIR$/DokabenKeyboardAndroid.iml" />
     </modules>
   </component>
 </project>
