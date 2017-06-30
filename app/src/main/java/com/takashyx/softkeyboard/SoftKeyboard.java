@@ -30,13 +30,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedText;
+import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
-import java.io.Console;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class SoftKeyboard extends InputMethodService
 
     private InputMethodManager mInputMethodManager;
 
-    private LatinKeyboardView mInputView;
+    private DokabenKeyboardView mInputView;
     private CandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
     
@@ -76,8 +76,8 @@ public class SoftKeyboard extends InputMethodService
     private long mLastShiftTime;
     private long mMetaState;
     
-    private LatinKeyboard mQwertyKeyboard;
-    private LatinKeyboard mCurKeyboard;
+    private DokabenKeyboard mQwertyKeyboard;
+    private DokabenKeyboard mCurKeyboard;
     
     private String mWordSeparators;
 
@@ -142,7 +142,7 @@ public class SoftKeyboard extends InputMethodService
             if (displayWidth == mLastDisplayWidth) return;
             mLastDisplayWidth = displayWidth;
         }
-        mQwertyKeyboard = new LatinKeyboard(this, R.xml.key_layout);
+        mQwertyKeyboard = new DokabenKeyboard(this, R.xml.key_layout);
     }
     
     /**
@@ -152,7 +152,7 @@ public class SoftKeyboard extends InputMethodService
      * a configuration change.
      */
     @Override public View onCreateInputView() {
-        mInputView = (LatinKeyboardView) getLayoutInflater().inflate(
+        mInputView = (DokabenKeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
         mInputView.setOnTouchListener(new OnSwipeTouchListener(this)
@@ -182,7 +182,7 @@ public class SoftKeyboard extends InputMethodService
         return mInputView;
     }
 
-    private void setLatinKeyboard(LatinKeyboard nextKeyboard) {
+    private void setLatinKeyboard(DokabenKeyboard nextKeyboard) {
         final boolean shouldSupportLanguageSwitchKey =
                 mInputMethodManager.shouldOfferSwitchingToNextInputMethod(getToken());
         nextKeyboard.setLanguageSwitchKeyVisibility(shouldSupportLanguageSwitchKey);
@@ -575,13 +575,18 @@ public class SoftKeyboard extends InputMethodService
         } else if (primaryCode == Keyboard.KEYCODE_CANCEL) {
             handleClose();
             return;
-        } else if (primaryCode == LatinKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
+        } else if (primaryCode == DokabenKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
             handleLanguageSwitch();
             return;
-        } else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) {
+        } else if (primaryCode == DokabenKeyboardView.KEYCODE_OPTIONS) {
             // Show a menu or somethin'
+        } else if (primaryCode == DokabenKeyboardView.KEYCODE_CURSOR_LEFT) {
+            handleCursorLeft();
+        } else if (primaryCode == DokabenKeyboardView.KEYCODE_CURSOR_RIGHT) {
+            handleCursorRight();
         }
 
+        // handle swipe
         else if (0x30A2 <= primaryCode && primaryCode <= 0x30FF) {
             Log.i("dokaben","catch PriaryCode: " + String.valueOf(primaryCode) );
         }
@@ -670,6 +675,28 @@ public class SoftKeyboard extends InputMethodService
         } else {
             getCurrentInputConnection().commitText(
                     String.valueOf((char) primaryCode), 1);
+        }
+    }
+
+    private void handleCursorLeft() {
+        InputConnection ic = getCurrentInputConnection();
+        ExtractedText et = ic.getExtractedText(new ExtractedTextRequest(), 0);
+        int selectionStart = et.selectionStart;
+        int selectionEnd = et.selectionEnd;
+
+        if (selectionStart == selectionEnd && selectionStart != 0) {
+            ic.setSelection(selectionStart-1, selectionEnd-1);
+        }
+    }
+
+    private void handleCursorRight() {
+        InputConnection ic = getCurrentInputConnection();
+        ExtractedText et = ic.getExtractedText(new ExtractedTextRequest(), 0);
+        int selectionStart = et.selectionStart;
+        int selectionEnd = et.selectionEnd;
+
+        if (selectionStart == selectionEnd && selectionStart != et.text.length()) {
+            ic.setSelection(selectionStart+1, selectionEnd+1);
         }
     }
 

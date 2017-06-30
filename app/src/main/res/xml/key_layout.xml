@@ -34,11 +34,11 @@
     </Row>
 
     <Row>
-        <Key android:codes="113" android:keyLabel="←" android:keyEdgeFlags="left"/>
+        <Key android:codes="-102" android:keyLabel="←" android:keyEdgeFlags="left"/>
         <Key android:codes="0x30BF" android:keyLabel="た"/>
         <Key android:codes="0x30CA" android:keyLabel="な"/>
         <Key android:codes="0x30CF" android:keyLabel="は"/>
-        <Key android:codes="112" android:keyLabel="→" android:keyEdgeFlags="right"/>
+        <Key android:codes="-103" android:keyLabel="→" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>

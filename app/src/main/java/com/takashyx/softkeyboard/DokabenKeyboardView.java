@@ -23,17 +23,20 @@ import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodSubtype;
 
-public class LatinKeyboardView extends KeyboardView {
+public class DokabenKeyboardView extends KeyboardView {
 
     static final int KEYCODE_OPTIONS = -100;
     // TODO: Move this into android.inputmethodservice.Keyboard
     static final int KEYCODE_LANGUAGE_SWITCH = -101;
 
-    public LatinKeyboardView(Context context, AttributeSet attrs) {
+    static final int KEYCODE_CURSOR_LEFT = -102;
+    static final int KEYCODE_CURSOR_RIGHT = -103;
+
+    public DokabenKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public LatinKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+    public DokabenKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

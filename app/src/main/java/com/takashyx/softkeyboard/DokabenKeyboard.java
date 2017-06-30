@@ -19,12 +19,11 @@ package com.takashyx.softkeyboard;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
-public class LatinKeyboard extends Keyboard {
+public class DokabenKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
@@ -54,12 +53,12 @@ public class LatinKeyboard extends Keyboard {
      */
     private Key mSavedLanguageSwitchKey;
     
-    public LatinKeyboard(Context context, int xmlLayoutResId) {
+    public DokabenKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId);
     }
 
-    public LatinKeyboard(Context context, int layoutTemplateResId, 
-            CharSequence characters, int columns, int horizontalPadding) {
+    public DokabenKeyboard(Context context, int layoutTemplateResId,
+                           CharSequence characters, int columns, int horizontalPadding) {
         super(context, layoutTemplateResId, characters, columns, horizontalPadding);
     }
 
@@ -71,7 +70,7 @@ public class LatinKeyboard extends Keyboard {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
             mSpaceKey = key;
-        } else if (key.codes[0] == LatinKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
+        } else if (key.codes[0] == DokabenKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
             mLanguageSwitchKey = key;
             mSavedLanguageSwitchKey = new LatinKey(res, parent, x, y, parser);
         }
