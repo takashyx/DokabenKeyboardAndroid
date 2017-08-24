@@ -88,6 +88,7 @@ public class SoftKeyboard extends InputMethodService
 
     /*swipe status*/
     private int mSwipeDirection;
+    private boolean mPressing;
 
     private int [][] dokaben_keycode_array = {
             //center, left, up, right, down
@@ -160,7 +161,8 @@ public class SoftKeyboard extends InputMethodService
         dakuten_convert_array.put("ダ","タ");
         dakuten_convert_array.put("チ","ヂ");
         dakuten_convert_array.put("ヂ","チ");
-        dakuten_convert_array.put("ツ","ヅ");
+        dakuten_convert_array.put("ツ","ッ");
+        dakuten_convert_array.put("ッ","ヅ");
         dakuten_convert_array.put("ヅ","ツ");
         dakuten_convert_array.put("テ","デ");
         dakuten_convert_array.put("デ","テ");
@@ -193,8 +195,6 @@ public class SoftKeyboard extends InputMethodService
         dakuten_convert_array.put("ェ","エ");
         dakuten_convert_array.put("オ","ォ");
         dakuten_convert_array.put("ォ","オ");
-        dakuten_convert_array.put("ツ","ッ");
-        dakuten_convert_array.put("ッ","ツ");
         dakuten_convert_array.put("ヤ","ャ");
         dakuten_convert_array.put("ャ","ヤ");
         dakuten_convert_array.put("ユ","ュ");
@@ -277,6 +277,7 @@ public class SoftKeyboard extends InputMethodService
         dokaben_convert_array.put("ル",":dokaben_ru:");
         dokaben_convert_array.put("レ",":dokaben_re:");
         dokaben_convert_array.put("ロ",":dokaben_ro:");
+        dokaben_convert_array.put("ッ",":dokaben_tu_small:");
         dokaben_convert_array.put("ャ",":dokaben_ya_small:");
         dokaben_convert_array.put("ュ",":dokaben_yu_small:");
         dokaben_convert_array.put("ョ",":dokaben_yo_small:");
@@ -725,6 +726,10 @@ public class SoftKeyboard extends InputMethodService
 
 //        Log.i("dokaben", "onKey primaryCode:" + String.valueOf(primaryCode) + " keyCodes: " + s);
 
+//        if (mPressing) {
+//            return;
+//        }
+//        else if (isWordSeparator(primaryCode)) {
         if (isWordSeparator(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
@@ -1001,6 +1006,7 @@ public class SoftKeyboard extends InputMethodService
     public void onPress(int primaryCode) {
         mKeyDownKeyCode = primaryCode;
         mSwipeDirection = 0;
+        mPressing = true;
     }
     
     public void onRelease(int primaryCode) {
@@ -1012,6 +1018,7 @@ public class SoftKeyboard extends InputMethodService
             handleCharacter(FinalInputUnicode, keyCodes);
         }
         mSwipeDirection = 0;
+        mPressing = false;
     }
 
     public void swipeRight() {
