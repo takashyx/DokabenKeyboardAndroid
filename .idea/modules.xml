@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DokabenKeyboard/DokabenKeyboard.iml" filepath="$PROJECT_DIR$/DokabenKeyboard/DokabenKeyboard.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DokabenKeyboardAndroid.iml" filepath="$PROJECT_DIR$/DokabenKeyboardAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DokabenKeyboardAndroid.iml" filepath="$PROJECT_DIR$/.idea/modules/DokabenKeyboardAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.iml" filepath="$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DokabenKeyboard/DokabenKeyboardAndroid.DokabenKeyboard.unitTest.iml" />
     </modules>
   </component>
 </project>
