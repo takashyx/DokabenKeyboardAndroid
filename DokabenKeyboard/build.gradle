@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.takashyx.softkeyboard"
         versionCode 2
         versionName "0.2"
+        minSdk 33
+        targetSdk 33
     }
 
     buildTypes {
@@ -16,4 +18,5 @@ android {
         }
     }
     namespace 'com.takashyx.softkeyboard'
+    buildToolsVersion '34.0.0'
 }
