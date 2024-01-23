@@ -345,6 +345,7 @@ public class SoftKeyboard extends InputMethodService
         });
 
         setDokabenKeyboard(mQwertyKeyboard);
+        mInputView.setPreviewEnabled(false);
         return mInputView;
     }
 
